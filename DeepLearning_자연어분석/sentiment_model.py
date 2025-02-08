@@ -1,3 +1,52 @@
+'''
+감성 분석 모델 (Sentiment Analysis) 구현
+
+##주요 단계 설명##
+
+1️⃣ 데이터 로드 및 전처리
+데이터셋: training.1600000.processed.noemoticon.csv
+전처리 과정:
+텍스트를 소문자로 변환
+URL, 특수문자, 해시태그(#), 멘션(@) 제거
+불용어(stopwords) 제거
+TF-IDF(Term Frequency - Inverse Document Frequency)로 벡터화 (1000개 단어 사용)
+
+2️⃣ 데이터셋 분할 및 텐서 변환
+데이터셋을 80:10:10 비율로 분할
+학습 데이터 (Train)
+검증 데이터 (Validation)
+테스트 데이터 (Test)
+PyTorch의 TensorDataset을 활용하여 DataLoader 생성
+텐서 변환 후 배치(batch) 단위로 모델 학습
+
+3️⃣ 모델 설계 (PyTorch)
+Feedforward Neural Network 기반 모델 (SentimentClassifier)
+입력층 (1000차원, TF-IDF) → 4개 은닉층 (512 → 256 → 128 → 64)
+활성화 함수: ReLU
+출력층: Sigmoid (이진 분류)
+Batch Normalization & Dropout 적용 (과적합 방지)
+
+4️⃣ 모델 학습 및 검증
+손실 함수: BCELoss() (Binary Cross-Entropy Loss)
+최적화 알고리즘: Adam
+학습률 스케줄링: ReduceLROnPlateau 사용 (검증 손실 감소 속도 조절)
+Early Stopping 적용 (100 epoch 동안 개선 없으면 조기 종료)
+
+5️⃣ 모델 평가
+테스트 데이터로 정확도(Accuracy) 측정
+**예측값이 0.5 이상이면 긍정(Positive), 아니면 부정(Negative)**으로 분류
+
+6️⃣ 모델 저장 및 로드
+학습된 모델 저장 (model_weights.pth)
+저장된 모델을 불러와 새로운 텍스트에 대한 감성 분석 수행
+
+7️⃣ 감성 예측 함수
+predict_sentiment(model, text, vectorizer, threshold=0.69)
+새로운 문장을 TF-IDF 벡터화하여 감성 분석 수행
+임계값(Threshold) 0.69 이상이면 Positive, 아니면 Negative 반환
+
+'''
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
